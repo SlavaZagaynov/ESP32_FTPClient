@@ -12,7 +12,7 @@
 .
 .
 
- орининал: # FTP Client for the ESP32
+ оригинал: # FTP Client for the ESP32
 
 
 A FTP-Client for the ESP32
