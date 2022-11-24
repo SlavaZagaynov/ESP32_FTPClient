@@ -114,6 +114,44 @@ void ESP32_FTPClient::WriteData (unsigned char * data, int dataLength) {
   WriteClientBuffered(&dclient, &data[0], dataLength);
 }
 
+
+
+
+/**
+ * WriteData
+ * @param stream Stream *       data stream to send
+ * @param size int           size for the data to send if 0 not data is send
+ * TODO @return -1 if no info or > 0 when data-Length is set to the server
+ * Doc about stream https://www.arduino.cc/reference/en/language/functions/communication/stream/
+ */
+void ESP32_FTPClient::WriteData (Stream * stream) {
+  FTPdbgn(F("Writing from Stream"));
+  if(!stream) {
+    FTPdbgn(F("Error Stream is unvaible"));
+    return;
+  }
+  if(!isConnected()) return;
+
+  // get available data size and intialize sizeAvailable variable
+  int sizeAvailable = stream->available();
+
+  FTPdbg(F("File Size from stream = "));
+  FTPdbgn(sizeAvailable);
+
+  //Algorithme to send available data from stream
+
+  while (sizeAvailable > 0) {
+    size_t len = std::min((int)(sizeof(streambuffer) - 1), sizeAvailable);
+    stream->readBytes(streambuffer, len);
+    WriteData( streambuffer, len);
+    sizeAvailable -= len;
+  }
+}
+
+
+
+
+
 void ESP32_FTPClient::CloseFile () {
   FTPdbgn(F("Close File"));
   dclient.stop();
@@ -306,7 +344,7 @@ void ESP32_FTPClient::ContentListWithListCommand(const char * dir, String * list
     {
       String tmp = dclient.readStringUntil('\n');
       list[_b] = tmp.substring(tmp.lastIndexOf(" ") + 1, tmp.length());
-      //FTPdbgn(String(_b) + ":" + tmp);
+      FTPdbgn(String(_b) + ":" + tmp);
       _b++;
     }
   }
