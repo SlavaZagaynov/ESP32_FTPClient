@@ -1,7 +1,15 @@
 # FTP Client for the ESP32
 
+
+
+
+
 исправлены ошибки
 добавлено отправка файла 
+
+
+
+
 
 
 A FTP-Client for the ESP32
