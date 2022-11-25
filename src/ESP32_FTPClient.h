@@ -28,12 +28,12 @@ class ESP32_FTPClient
   char* serverAdress;
   uint16_t port;
   bool _isConnected = false;
-  unsigned char clientBuf[1500];
-  size_t bufferSize = 1500;
+  unsigned char clientBuf[1024];
+  size_t bufferSize = 1024;
   uint16_t timeout = 10000;
   WiFiClient* GetDataClient();
     //Buffer for stream data
-  uint8_t streambuffer[1024];
+  //uint8_t streambuffer[1024];
   
   public:
   ESP32_FTPClient(char* _serverAdress, uint16_t _port, char* _userName, char* _passWord, uint16_t _timeout = 10000, uint8_t _verbose = 1);
@@ -45,7 +45,7 @@ class ESP32_FTPClient
   void AppendFile( char* fileName);
   void WriteData (unsigned char * data, int dataLength);
   
-    void WriteData (Stream * stream);
+    //void WriteDataStream (Stream * stream);
 	
 	
   void CloseFile ();

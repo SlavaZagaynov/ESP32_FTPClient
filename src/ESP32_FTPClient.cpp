@@ -116,7 +116,6 @@ void ESP32_FTPClient::WriteData (unsigned char * data, int dataLength) {
 
 
 
-
 /**
  * WriteData
  * @param stream Stream *       data stream to send
@@ -124,7 +123,10 @@ void ESP32_FTPClient::WriteData (unsigned char * data, int dataLength) {
  * TODO @return -1 if no info or > 0 when data-Length is set to the server
  * Doc about stream https://www.arduino.cc/reference/en/language/functions/communication/stream/
  */
-void ESP32_FTPClient::WriteData (Stream * stream) {
+ 
+  
+
+/* void ESP32_FTPClient::WriteDataStream (Stream * stream) {
   FTPdbgn(F("Writing from Stream"));
   if(!stream) {
     FTPdbgn(F("Error Stream is unvaible"));
@@ -146,9 +148,10 @@ void ESP32_FTPClient::WriteData (Stream * stream) {
     WriteData( streambuffer, len);
     sizeAvailable -= len;
   }
-}
+} */
 
-
+ 
+ 
 
 
 
