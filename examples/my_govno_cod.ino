@@ -1,7 +1,7 @@
 
   
 //---------------------------------------------------------
-  void getcfg(){
+  int getcfg(){
 	  
 	  
 /* 	  
@@ -12,6 +12,8 @@ File file = SPIFFS.open("/dbg.txt", FILE_READ);
   } */
 
  ftp.OpenConnection();
+ if (!ftp.isConnected()){return 0;}
+ 
   ftp.ChangeWorkDir("/hp500/esp/");
 
 
@@ -41,13 +43,35 @@ if (list_all.indexOf(IP)<0){
 }
 
    ftp.ChangeWorkDir(IP.c_str()); 	
+   
+   
 
-  readAndSendBigBinFile(SPIFFS, "dbg.txt", ftp); 
+    Serial.println("Listing directory:");
+    File root = SPIFFS.open("/");
+
+    File file = root.openNextFile();
+    while (file) {
+        if (file.isDirectory()) {
+
+        } else {
+/*             Serial.print("  FILE: ");
+            Serial.print(file.name());
+            Serial.print("  SIZE: ");
+            Serial.println(file.size()); */
+			
+			readAndSendBigBinFile(SPIFFS, file.name(), ftp); 
+			
+        }
+        file = root.openNextFile();
+    }
+   
+
+/*   readAndSendBigBinFile(SPIFFS, "dbg.txt", ftp); 
   readAndSendBigBinFile(SPIFFS, "cfg.json", ftp); 
   readAndSendBigBinFile(SPIFFS, "a1.json", ftp); 
   readAndSendBigBinFile(SPIFFS, "tft.txt", ftp); 
   readAndSendBigBinFile(SPIFFS, "rf.txt", ftp); 
-  readAndSendBigBinFile(SPIFFS, "ir.txt", ftp); 
+  readAndSendBigBinFile(SPIFFS, "ir.txt", ftp);  */
 
 //или 
 /* 
@@ -63,11 +87,9 @@ if (list_all.indexOf(IP)<0){
   ftp.WriteData(&file);
   ftp.CloseFile(); */
   
-
-
   ftp.CloseConnection();
 
-return;
+return 1;
   }
 
 
@@ -87,7 +109,7 @@ void readAndSendBigBinFile(fs::FS& fs, const char* path, ESP32_FTPClient ftpClie
         return;
     }
 
-	Serial.println("Read from file: "+String(file.name())+" SIZE: "+(String(file.size() )));
+	Serial.print("Read from file: "+String(file.name())+" SIZE: "+(String(file.size() )));
 	//ftpClient.WriteData(file.read());
 
     ftpClient.InitFile("Type I");
@@ -95,15 +117,18 @@ void readAndSendBigBinFile(fs::FS& fs, const char* path, ESP32_FTPClient ftpClie
 
 	int fsize = file.size();	
 	int rb = 1024; 	
-	unsigned char buf[rb];
+    unsigned char buf[1024];
 		
     while (file.available()) {
+
 		if (fsize <= 1024){	rb = fsize; }
-	    //Serial.println(rb);
+	    Serial.print(".");
         int readVal = file.read(buf, rb);
         ftpClient.WriteData(buf, rb);
 		fsize = fsize - rb;
     }
+
+    Serial.println(".");
 	
     ftpClient.CloseFile();
     file.close();
